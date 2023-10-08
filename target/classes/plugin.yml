@@ -1,0 +1,4 @@
+name: SpigotUtils
+version: '1.0'
+main: de.cyklon.spigotutils.SpigotUtils
+api-version: '1.20'
