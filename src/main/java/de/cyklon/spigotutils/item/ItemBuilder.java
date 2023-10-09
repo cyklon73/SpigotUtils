@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Collections;
 import java.util.List;
 
 public class ItemBuilder {
@@ -53,6 +54,11 @@ public class ItemBuilder {
     public ItemBuilder setLore(List<String> lore) {
         meta.setLore(lore);
         return this;
+    }
+
+    public ItemBuilder addLore(List<String> lore) {
+        lore.addAll(meta.getLore()!=null ? meta.getLore() : Collections.emptyList());
+        return setLore(lore);
     }
 
     public ItemBuilder addEnchantment(Enchantment ench, Integer level) {
