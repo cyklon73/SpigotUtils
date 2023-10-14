@@ -12,6 +12,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ItemBuilder {
 
@@ -62,6 +63,14 @@ public class ItemBuilder {
         if (oldLore==null) oldLore = new ArrayList<>();
         oldLore.addAll(lore);
         return setLore(oldLore);
+    }
+
+    public ItemBuilder removeLore(String regex) {
+        Pattern pattern = Pattern.compile(regex);
+        List<String> lore = meta.getLore();
+        if (lore==null) return this;
+        for (int i = 0; i < lore.size(); i++) if (pattern.matcher(lore.get(i)).matches()) lore.remove(i);
+        return this;
     }
 
     public ItemBuilder addEnchantment(Enchantment ench, Integer level) {
