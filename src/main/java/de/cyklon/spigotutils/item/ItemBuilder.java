@@ -2,7 +2,6 @@ package de.cyklon.spigotutils.item;
 
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -10,9 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class ItemBuilder {
 
@@ -66,11 +63,8 @@ public class ItemBuilder {
     }
 
     public ItemBuilder removeLore(String regex) {
-        Pattern pattern = Pattern.compile(regex);
-        List<String> lore = meta.getLore();
-        if (lore==null) return this;
-        for (int i = 0; i < lore.size(); i++) if (pattern.matcher(lore.get(i)).matches()) lore.remove(i);
-        meta.setLore(lore);
+        List<String> lore = this.meta.getLore();
+        if(lore != null) this.meta.setLore(lore.stream().filter(s -> !s.matches(regex)).toList());
         return this;
     }
 
