@@ -70,6 +70,7 @@ public class ItemBuilder {
         List<String> lore = meta.getLore();
         if (lore==null) return this;
         for (int i = 0; i < lore.size(); i++) if (pattern.matcher(lore.get(i)).matches()) lore.remove(i);
+        meta.setLore(lore);
         return this;
     }
 
