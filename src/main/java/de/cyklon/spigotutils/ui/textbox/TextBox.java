@@ -6,18 +6,26 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+
+import java.util.UUID;
 
 public final class TextBox {
 
-    private BossBar bar;
+    private final static String PAD = "";
+    private BossBar[] bars;
 
-    public TextBox(NamespacedKey key, BarColor color, BarStyle style) {
-        this.bar = Bukkit.getBossBar(key);
-        if (this.bar==null) this.bar = Bukkit.createBossBar(key, "", color, style);
+    public TextBox(Plugin plugin, String id, BarColor color, BarStyle style) {
+        this.bars = new BossBar[4];
+        for (int i = 0; i < bars.length; i++) {
+            NamespacedKey key = new NamespacedKey(plugin, "textbox-" + id + "-" + i);
+            this.bars[i] = Bukkit.getBossBar(key);
+            if (this.bars[i]==null) this.bars[i] = Bukkit.createBossBar(key, "", color, style);
+        }
     }
 
     public void add(Player player) {
-        bar.addPlayer(player);
+        for (BossBar bar : bars) bar.addPlayer(player);
     }
 
     public void addAll() {
@@ -25,31 +33,50 @@ public final class TextBox {
     }
 
     public void remove(Player player) {
-        bar.removePlayer(player);
+        for (BossBar bar : bars) bar.removePlayer(player);
     }
 
     public void removeAll() {
-        bar.removeAll();
+        for (BossBar bar : bars) bar.removeAll();
     }
 
     public void setVisible(boolean visible) {
-        bar.setVisible(visible);
+        for (BossBar bar : bars) bar.setVisible(visible);
     }
 
     public boolean isVisible() {
-        return bar.isVisible();
+        return bars[0].isVisible();
     }
 
     public void clear() {
-        bar.setTitle("");
+        for (BossBar bar : bars) bar.setTitle("");
     }
 
     public void setText(String text) {
-        bar.setTitle(text);
+        for (BossBar bar : bars) bar.setTitle(text);
+    }
+
+    private void move() {
+        for (int i = 0; i < bars.length; i++) {
+            String text = bars[i].getTitle();
+            bars[i].setTitle("");
+            if (i==0) continue;
+            bars[i-1].setTitle(text);
+        }
+    }
+
+    private boolean sendToBlank(String msg) {
+        for (BossBar bar : bars) {
+            if (bar.getTitle().isBlank()) {
+                bar.setTitle(msg);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void send(String msg) {
-        bar.setTitle(bar.getTitle() + "\n" + msg);
+        while (!sendToBlank(msg)) move();
     }
 
 }
