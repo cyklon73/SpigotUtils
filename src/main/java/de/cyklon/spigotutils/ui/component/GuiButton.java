@@ -11,6 +11,11 @@ public class GuiButton extends GuiComponent {
     private final ItemStack icon;
     private final BiConsumer<Gui, HumanEntity> listener;
 
+    /**
+     * The GuiButton is passed an ItemStack as an icon and a BiConsumer which is used as an onClick event.
+     * @param icon the icon is an ItemStack and is displayed in the GUI
+     * @param listener the listener is a BiConsumer. the Gui is the gui in which the button is located and the HumanEntity is the player who clicked on the button.
+     */
     public GuiButton(ItemStack icon, BiConsumer<Gui, HumanEntity> listener) {
         this.icon = icon;
         this.listener = listener;

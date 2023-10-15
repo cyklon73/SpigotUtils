@@ -31,6 +31,11 @@ public abstract class GuiComponent {
         }
     }
 
+    /**
+     * by default the event is cancelled but you can set it to false with setCancelled()
+     * <p>
+     * if the event is canceled the component item cannot be picked up from the gui
+     */
     public static class ClickEvent extends ComponentEvent implements Cancellable {
 
         private boolean cancelled = true;
@@ -61,8 +66,15 @@ public abstract class GuiComponent {
         return new ItemBuilder(createItem()).setLocalizedName(id.toString()).build();
     }
 
+    /**
+     * In this method you can build your component item and return it
+     */
     protected abstract ItemStack createItem();
 
+    /**
+     * this method is called when the component is clicked on
+     * @param event the click event
+     */
     public abstract void onClick(ClickEvent event);
 
 }
