@@ -21,6 +21,9 @@ public abstract class Gui implements Listener {
     private final String id;
     private final int rows;
     private final BiFunction<Integer, Integer, String> title;
+    /**
+     * the page index starts with 1
+     */
     private int currentPage = 1;
     private final List<GuiComponent[]> pages;
     private Inventory inv;
@@ -68,16 +71,30 @@ public abstract class Gui implements Listener {
     }
 
     /**
-     * @return die anzahl aller seiten zurück
+     * @return the amount of all pages
      */
     public int getPageAmount() {
         return pages.size();
     }
 
     /**
+     * @return the row count of the GUI
+     */
+    public int getRowCount() {
+        return rows;
+    }
+
+    /**
+     * @return the id of the GUI
+     */
+    public String getID() {
+        return id;
+    }
+
+    /**
      * sets a component to a specific position
      * @param page the page index of the page on which the component should be placed
-     * @param index the slot index on which the component is to be set. the index starts at the top left, then goes to the right, then goes down one row, from left to right again, and so on.
+     * @param index the slot index on which the component is to be set. the index starts with 0 at the top left, then goes to the right, then goes down one row, from left to right again, and so on.
      * @param component the component to be set
      */
     protected void setComponent(int page, int index, GuiComponent component) {
