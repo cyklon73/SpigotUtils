@@ -1,6 +1,6 @@
-package de.cyklon.spigotutils.gui;
+package de.cyklon.spigotutils.ui;
 
-import de.cyklon.spigotutils.gui.component.GuiComponent;
+import de.cyklon.spigotutils.ui.component.GuiComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,7 +15,6 @@ import org.bukkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public abstract class Gui implements Listener {
 

@@ -1,6 +1,6 @@
-package de.cyklon.spigotutils.gui.component;
+package de.cyklon.spigotutils.ui.component;
 
-import de.cyklon.spigotutils.gui.Gui;
+import de.cyklon.spigotutils.ui.Gui;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.ItemStack;
 

@@ -1,4 +1,4 @@
-package de.cyklon.spigotutils.gui.component;
+package de.cyklon.spigotutils.ui.component;
 
 import de.cyklon.spigotutils.item.ItemBuilder;
 import org.bukkit.Material;
