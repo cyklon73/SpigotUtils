@@ -160,6 +160,17 @@ public class ItemBuilder {
     }
 
     /**
+     * removes the lore line at the index
+     * @param index the line index to remove
+     */
+    public ItemBuilder removeLore(int index) {
+        List<String> lore = this.meta.getLore();
+        if (lore!=null) lore.remove(index);
+        this.meta.setLore(lore);
+        return this;
+    }
+
+    /**
      * add a Enchantment to the ItemStack
      * @param enchantment the enchantment to add
      * @param level the level of the enchantment
