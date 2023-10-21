@@ -129,11 +129,15 @@ public enum AdvancementType {
     CRAFTING_A_NEW_LOOK(Category.ADVENTURE, "trim_with_any_armor_pattern"),
     A_THROWAWAY_JOKE(Category.ADVENTURE, "throw_trident"),
     STICKY_SITUATION(Category.ADVENTURE, "honey_block_slide"),
-    OL_BETSY(Category.ADVENTURE, "ol_betsy");
+    OL_BETSY(Category.ADVENTURE, "ol_betsy"),
+
+
+    CUSTOM(Category.CUSTOM, "custom");
 
 
     private final Category category;
-    private final String key;
+    private String key;
+    private String namespace = null;
 
     AdvancementType(Category category, String key) {
         this.category = category;
@@ -149,11 +153,23 @@ public enum AdvancementType {
     }
 
     public NamespacedKey getNamespacedKey() {
-        return NamespacedKey.minecraft(String.format("%s/%s", category.name().toLowerCase(), key));
+        return namespace==null ? NamespacedKey.minecraft(String.format("%s/%s", category.name().toLowerCase(), key)) : new NamespacedKey(namespace, key);
     }
 
     public Advancement getAdvancement() {
         return Bukkit.getAdvancement(getNamespacedKey());
+    }
+
+    public static AdvancementType getAdvancementType(Advancement advancement) {
+        return getAdvancementType(advancement.getKey());
+    }
+
+    public static AdvancementType getAdvancementType(NamespacedKey key) {
+        for (AdvancementType value : values()) if (key.equals(value.getNamespacedKey())) return value;
+        AdvancementType custom = CUSTOM;
+        custom.key = key.getKey();
+        custom.namespace = key.getNamespace();
+        return custom;
     }
 
     public static enum Category {
@@ -161,6 +177,7 @@ public enum AdvancementType {
         END,
         STORY,
         HUSBANDRY,
-        ADVENTURE
+        ADVENTURE,
+        CUSTOM
     }
 }
