@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.advancement.Advancement;
 
-public interface AdvancementType {
+public sealed interface AdvancementType permits CustomAdvancement, DefaultAdvancement {
 
 	String getKey();
 	String getNamespace();
