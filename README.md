@@ -1,5 +1,4 @@
 ![logo](https://raw.githubusercontent.com/cyklon73/SpigotUtils/master/logo.png)
-[![](https://jitpack.io/v/cyklon73/SpigotUtils/month.svg)](https://jitpack.io/cyklon73/SpigotUtils)
 # SpigotUtils
 A library that provides various utilities for the development of Spigot plugins. Among them a UI package
 
