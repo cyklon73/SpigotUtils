@@ -6,11 +6,7 @@ public final class CustomAdvancement implements AdvancementType {
 
 	private final NamespacedKey key;
 
-	CustomAdvancement(String namespace, String key) {
-		this(new NamespacedKey(namespace, key));
-	}
-
-	public CustomAdvancement(NamespacedKey key) {
+	CustomAdvancement(NamespacedKey key) {
 		this.key = key;
 	}
 
