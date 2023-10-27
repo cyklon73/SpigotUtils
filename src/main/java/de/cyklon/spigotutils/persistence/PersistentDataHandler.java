@@ -80,116 +80,120 @@ public final class PersistentDataHandler {
         set(namespacedKey, PersistentDataType.TAG_CONTAINER, value);
     }
 
-    public <T, Z> void revise(@NotNull NamespacedKey namespacedKey, @NotNull PersistentDataType<T, Z> persistentDataType, @NotNull Function<Z, Z> function) {
-        set(namespacedKey, persistentDataType, function.apply(get(namespacedKey, persistentDataType)));
+    public <T, Z> Z revise(@NotNull NamespacedKey namespacedKey, @NotNull PersistentDataType<T, Z> persistentDataType, @NotNull Function<Z, Z> function) {
+        Z val = function.apply(get(namespacedKey, persistentDataType));
+        set(namespacedKey, persistentDataType, val);
+        return val;
     }
 
-    public void reviseByte(@NotNull NamespacedKey namespacedKey, @NotNull Function<Byte, Byte> function) {
-        revise(namespacedKey, PersistentDataType.BYTE, function);
+    public Byte reviseByte(@NotNull NamespacedKey namespacedKey, @NotNull Function<Byte, Byte> function) {
+        return revise(namespacedKey, PersistentDataType.BYTE, function);
     }
 
-    public void reviseShort(@NotNull NamespacedKey namespacedKey, @NotNull Function<Short, Short> function) {
-        revise(namespacedKey, PersistentDataType.SHORT, function);
+    public Short reviseShort(@NotNull NamespacedKey namespacedKey, @NotNull Function<Short, Short> function) {
+        return revise(namespacedKey, PersistentDataType.SHORT, function);
     }
 
-    public void reviseInt(@NotNull NamespacedKey namespacedKey, @NotNull Function<Integer, Integer> function) {
-        revise(namespacedKey, PersistentDataType.INTEGER, function);
+    public Integer reviseInt(@NotNull NamespacedKey namespacedKey, @NotNull Function<Integer, Integer> function) {
+        return revise(namespacedKey, PersistentDataType.INTEGER, function);
     }
 
-    public void reviseLong(@NotNull NamespacedKey namespacedKey, @NotNull Function<Long, Long> function) {
-        revise(namespacedKey, PersistentDataType.LONG, function);
+    public Long reviseLong(@NotNull NamespacedKey namespacedKey, @NotNull Function<Long, Long> function) {
+        return revise(namespacedKey, PersistentDataType.LONG, function);
     }
 
-    public void reviseFloat(@NotNull NamespacedKey namespacedKey, @NotNull Function<Float, Float> function) {
-        revise(namespacedKey, PersistentDataType.FLOAT, function);
+    public Float reviseFloat(@NotNull NamespacedKey namespacedKey, @NotNull Function<Float, Float> function) {
+        return revise(namespacedKey, PersistentDataType.FLOAT, function);
     }
 
-    public void reviseDouble(@NotNull NamespacedKey namespacedKey, @NotNull Function<Double, Double> function) {
-        revise(namespacedKey, PersistentDataType.DOUBLE, function);
+    public Double reviseDouble(@NotNull NamespacedKey namespacedKey, @NotNull Function<Double, Double> function) {
+        return revise(namespacedKey, PersistentDataType.DOUBLE, function);
     }
 
-    public void reviseBool(@NotNull NamespacedKey namespacedKey, @NotNull Function<Boolean, Boolean> function) {
-        revise(namespacedKey, PersistentDataType.BOOLEAN, function);
+    public Boolean reviseBool(@NotNull NamespacedKey namespacedKey, @NotNull Function<Boolean, Boolean> function) {
+        return revise(namespacedKey, PersistentDataType.BOOLEAN, function);
     }
 
-    public void reviseString(@NotNull NamespacedKey namespacedKey, @NotNull Function<String, String> function) {
-        revise(namespacedKey, PersistentDataType.STRING, function);
+    public String reviseString(@NotNull NamespacedKey namespacedKey, @NotNull Function<String, String> function) {
+        return revise(namespacedKey, PersistentDataType.STRING, function);
     }
 
-    public void reviseByteArray(@NotNull NamespacedKey namespacedKey, @NotNull Function<byte[], byte[]> function) {
-        revise(namespacedKey, PersistentDataType.BYTE_ARRAY, function);
+    public byte[] reviseByteArray(@NotNull NamespacedKey namespacedKey, @NotNull Function<byte[], byte[]> function) {
+        return revise(namespacedKey, PersistentDataType.BYTE_ARRAY, function);
     }
 
-    public void reviseIntArray(@NotNull NamespacedKey namespacedKey, @NotNull Function<int[], int[]> function) {
-        revise(namespacedKey, PersistentDataType.INTEGER_ARRAY, function);
+    public int[] reviseIntArray(@NotNull NamespacedKey namespacedKey, @NotNull Function<int[], int[]> function) {
+        return revise(namespacedKey, PersistentDataType.INTEGER_ARRAY, function);
     }
 
-    public void reviseLongArray(@NotNull NamespacedKey namespacedKey, @NotNull Function<long[], long[]> function) {
-        revise(namespacedKey, PersistentDataType.LONG_ARRAY, function);
+    public long[] reviseLongArray(@NotNull NamespacedKey namespacedKey, @NotNull Function<long[], long[]> function) {
+        return revise(namespacedKey, PersistentDataType.LONG_ARRAY, function);
     }
 
-    public void reviseTagContainerArray(@NotNull NamespacedKey namespacedKey, @NotNull Function<PersistentDataContainer[], PersistentDataContainer[]> function) {
-        revise(namespacedKey, PersistentDataType.TAG_CONTAINER_ARRAY, function);
+    public PersistentDataContainer[] reviseTagContainerArray(@NotNull NamespacedKey namespacedKey, @NotNull Function<PersistentDataContainer[], PersistentDataContainer[]> function) {
+        return revise(namespacedKey, PersistentDataType.TAG_CONTAINER_ARRAY, function);
     }
 
-    public void reviseTagContainer(@NotNull NamespacedKey namespacedKey, @NotNull Function<PersistentDataContainer, PersistentDataContainer> function) {
-        revise(namespacedKey, PersistentDataType.TAG_CONTAINER, function);
+    public PersistentDataContainer reviseTagContainer(@NotNull NamespacedKey namespacedKey, @NotNull Function<PersistentDataContainer, PersistentDataContainer> function) {
+        return revise(namespacedKey, PersistentDataType.TAG_CONTAINER, function);
     }
 
-    public <T, Z> void reviseWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull PersistentDataType<T, Z> persistentDataType, @NotNull Function<Z, Z> function, @NotNull Z def) {
-        set(namespacedKey, persistentDataType, function.apply(getOrDefault(namespacedKey, persistentDataType, def)));
+    public <T, Z> Z reviseWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull PersistentDataType<T, Z> persistentDataType, @NotNull Function<Z, Z> function, @NotNull Z def) {
+        Z val = function.apply(getOrDefault(namespacedKey, persistentDataType, def));
+        set(namespacedKey, persistentDataType, val);
+        return val;
     }
 
-    public void reviseByteWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Byte, Byte> function, @NotNull Byte def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.BYTE, function, def);
+    public Byte reviseByteWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Byte, Byte> function, @NotNull Byte def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.BYTE, function, def);
     }
 
-    public void reviseShortWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Short, Short> function, @NotNull Short def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.SHORT, function, def);
+    public Short reviseShortWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Short, Short> function, @NotNull Short def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.SHORT, function, def);
     }
 
-    public void reviseIntWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Integer, Integer> function, @NotNull Integer def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.INTEGER, function, def);
+    public Integer reviseIntWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Integer, Integer> function, @NotNull Integer def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.INTEGER, function, def);
     }
 
-    public void reviseLongWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Long, Long> function, @NotNull Long def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.LONG, function, def);
+    public Long reviseLongWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Long, Long> function, @NotNull Long def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.LONG, function, def);
     }
 
-    public void reviseFloatWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Float, Float> function, @NotNull Float def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.FLOAT, function, def);
+    public Float reviseFloatWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Float, Float> function, @NotNull Float def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.FLOAT, function, def);
     }
 
-    public void reviseDoubleWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Double, Double> function, @NotNull Double def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.DOUBLE, function, def);
+    public Double reviseDoubleWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Double, Double> function, @NotNull Double def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.DOUBLE, function, def);
     }
 
-    public void reviseBoolWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Boolean, Boolean> function, @NotNull Boolean def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.BOOLEAN, function, def);
+    public Boolean reviseBoolWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<Boolean, Boolean> function, @NotNull Boolean def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.BOOLEAN, function, def);
     }
 
-    public void reviseStringWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<String, String> function, @NotNull String def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.STRING, function, def);
+    public String reviseStringWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<String, String> function, @NotNull String def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.STRING, function, def);
     }
 
-    public void reviseByteArrayWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<byte[], byte[]> function, byte @NotNull [] def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.BYTE_ARRAY, function, def);
+    public byte[] reviseByteArrayWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<byte[], byte[]> function, byte @NotNull [] def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.BYTE_ARRAY, function, def);
     }
 
-    public void reviseIntArrayWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<int[], int[]> function, int @NotNull [] def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.INTEGER_ARRAY, function, def);
+    public int[] reviseIntArrayWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<int[], int[]> function, int @NotNull [] def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.INTEGER_ARRAY, function, def);
     }
 
-    public void reviseLongArrayWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<long[], long[]> function, long @NotNull [] def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.LONG_ARRAY, function, def);
+    public long[] reviseLongArrayWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<long[], long[]> function, long @NotNull [] def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.LONG_ARRAY, function, def);
     }
 
-    public void reviseTagContainerArrayWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<PersistentDataContainer[], PersistentDataContainer[]> function, @NotNull PersistentDataContainer[] def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.TAG_CONTAINER_ARRAY, function, def);
+    public PersistentDataContainer[] reviseTagContainerArrayWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<PersistentDataContainer[], PersistentDataContainer[]> function, @NotNull PersistentDataContainer[] def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.TAG_CONTAINER_ARRAY, function, def);
     }
 
-    public void reviseTagContainerWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<PersistentDataContainer, PersistentDataContainer> function, @NotNull PersistentDataContainer def) {
-        reviseWithDefault(namespacedKey, PersistentDataType.TAG_CONTAINER, function, def);
+    public PersistentDataContainer reviseTagContainerWithDefault(@NotNull NamespacedKey namespacedKey, @NotNull Function<PersistentDataContainer, PersistentDataContainer> function, @NotNull PersistentDataContainer def) {
+        return reviseWithDefault(namespacedKey, PersistentDataType.TAG_CONTAINER, function, def);
     }
 
     public <T, Z> boolean has(@NotNull NamespacedKey namespacedKey, @NotNull PersistentDataType<T, Z> persistentDataType) {
