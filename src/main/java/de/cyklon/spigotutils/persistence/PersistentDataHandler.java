@@ -15,14 +15,17 @@ public final class PersistentDataHandler {
 
     private final PersistentDataContainer container;
 
-    public PersistentDataHandler(@NotNull PersistentDataContainer container) {
+    private PersistentDataHandler(@NotNull PersistentDataContainer container) {
         this.container = container;
     }
 
-    public PersistentDataHandler(PersistentDataHolder holder) {
-        this(holder.getPersistentDataContainer());
+    public static PersistentDataHandler get(@NotNull PersistentDataContainer container) {
+        return new PersistentDataHandler(container);
     }
 
+    public static PersistentDataHandler get(@NotNull PersistentDataHolder holder) {
+        return new PersistentDataHandler(holder.getPersistentDataContainer());
+    }
 
     public <T, Z> void set(@NotNull NamespacedKey namespacedKey, @NotNull PersistentDataType<T, Z> persistentDataType, @NotNull Z z) {
         container.set(namespacedKey, persistentDataType, z);
