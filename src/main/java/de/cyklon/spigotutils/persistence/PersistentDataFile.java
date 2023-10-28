@@ -22,22 +22,20 @@ public class PersistentDataFile implements PersistentDataContainer {
     private final CraftPersistentDataTypeRegistry registry;
     private final CraftPersistentDataAdapterContext adapterContext;
     private final File file;
+    private final boolean autoSave;
 
     public PersistentDataFile(File file) {
+        this(file, true);
+    }
+
+    public PersistentDataFile(File file, boolean autoSave) {
         Preconditions.checkArgument(file != null, "The File cannot be null");
         this.customDataTags = new HashMap<>();
         this.registry = new CraftPersistentDataTypeRegistry();
         this.adapterContext = new CraftPersistentDataAdapterContext(this.registry);
         this.file = file;
-        try {
-            file.createNewFile();
-            try(FileInputStream fis = new FileInputStream(file)) {
-                byte[] data = fis.readAllBytes();
-                if (data.length!=0) readFromBytes(data, false);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this.autoSave = autoSave;
+        update();
     }
 
     public <T, Z> void set(NamespacedKey key, PersistentDataType<T, Z> type, Z value) {
@@ -45,7 +43,7 @@ public class PersistentDataFile implements PersistentDataContainer {
         Preconditions.checkArgument(type != null, "The provided type cannot be null");
         Preconditions.checkArgument(value != null, "The provided value cannot be null");
         this.customDataTags.put(key.toString(), this.registry.wrap(type.getPrimitiveType(), type.toPrimitive(value, this.adapterContext)));
-        save();
+        if (autoSave) save();
     }
 
     public <T, Z> boolean has(NamespacedKey key, PersistentDataType<T, Z> type) {
@@ -82,7 +80,7 @@ public class PersistentDataFile implements PersistentDataContainer {
     public void remove(NamespacedKey key) {
         Preconditions.checkArgument(key != null, "The NamespacedKey key cannot be null");
         this.customDataTags.remove(key.toString());
-        save();
+        if (autoSave) save();
     }
 
     public boolean isEmpty() {
@@ -113,9 +111,21 @@ public class PersistentDataFile implements PersistentDataContainer {
         return this.customDataTags.containsKey(key.toString());
     }
 
-    private void save() {
+    public void save() {
         try(FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(serializeToBytes());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void update() {
+        try {
+            file.createNewFile();
+            try(FileInputStream fis = new FileInputStream(file)) {
+                byte[] data = fis.readAllBytes();
+                if (data.length!=0) readFromBytes(data, false);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
