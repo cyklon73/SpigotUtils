@@ -8,6 +8,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -25,6 +26,10 @@ public final class PersistentDataHandler {
 
     public static PersistentDataHandler get(@NotNull PersistentDataHolder holder) {
         return new PersistentDataHandler(holder.getPersistentDataContainer());
+    }
+
+    public static PersistentDataHandler get(@NotNull File file) {
+        return new PersistentDataHandler(new PersistentDataFile(file));
     }
 
     public <T, Z> void set(@NotNull NamespacedKey namespacedKey, @NotNull PersistentDataType<T, Z> persistentDataType, @NotNull Z z) {
