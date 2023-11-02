@@ -17,6 +17,14 @@ final class ServerScoreboard extends DefaultLegacyScoreboard implements Listener
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		if (isDeleted()) return;
-		addPlayer(event.getPlayer());
+		Player player = event.getPlayer();
+		if (!addPlayer(player)) show(player);
+	}
+
+	@Override
+	protected boolean addPlayer(Player player) {
+		boolean f = super.addPlayer(player);
+		if (f) show(player);
+		return f;
 	}
 }

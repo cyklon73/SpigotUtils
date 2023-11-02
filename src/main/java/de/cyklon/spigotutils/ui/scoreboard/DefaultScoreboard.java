@@ -168,9 +168,13 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 		SCOREBOARDS.add(this);
 	}
 
-	protected void addPlayer(Player player) {
-		if (players.contains(player)) return;
+	protected boolean addPlayer(Player player) {
+		if (players.contains(player)) return false;
 		players.add(player);
+		return true;
+	}
+
+	protected void show(Player player) {
 		try {
 			sendPacket(player, objectivePacket(ObjectiveMode.CREATE));
 			sendPacket(player, displayObjectivePacket());
@@ -187,21 +191,25 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 				sendLineChange(score, topLines.get(score).second());
 			}
 		} catch (Throwable t) {
-			throw new RuntimeException("Unable to add player '" + player.getName() + "'", t);
+			throw new RuntimeException("Unable to show for player '" + player.getName() + "'", t);
 		}
 	}
 
-	protected void removePlayer(Player player) {
-		if (!players.contains(player)) return;
+	protected boolean removePlayer(Player player) {
+		if (!players.contains(player)) return false;
+		players.remove(player);
+		return true;
+	}
+
+	protected void hide(Player player) {
 		try {
 			for (Integer score : lines.keySet()) {
 				int i = lines.get(score).second();
 				if (i!=-1) sendPacket(player, teamPacket(score, TeamMode.REMOVE, i));
 			}
 			sendPacket(player, objectivePacket(ObjectiveMode.REMOVE));
-			players.remove(player);
 		} catch (Throwable t) {
-			throw new RuntimeException("Unable to remove player '" + player.getName() + "'", t);
+			throw new RuntimeException("Unable to hide for player '" + player.getName() + "'", t);
 		}
 	}
 
