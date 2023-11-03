@@ -181,10 +181,13 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 
 			Map<Integer, Pair<T, Integer>> topLines = getTopEntries(this.lines, LIMIT);
 
+			int i = 0;
 			for (Integer score : topLines.keySet()) {
-				int i = topLines.get(score).second();
-				sendPacket(scorePacket(score, ScoreboardAction.CHANGE, i));
-				sendPacket(teamPacket(score, TeamMode.CREATE, i));
+				int i1 = topLines.get(score).second();
+				if (i1==-1) i1 = i;
+				i++;
+				sendPacket(scorePacket(score, ScoreboardAction.CHANGE, i1));
+				sendPacket(teamPacket(score, TeamMode.CREATE, i1));
 			}
 
 			for (Integer score : topLines.keySet()) {
