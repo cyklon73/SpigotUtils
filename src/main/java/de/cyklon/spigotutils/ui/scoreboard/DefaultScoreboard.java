@@ -175,6 +175,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	}
 
 	protected void show(Player player) {
+        System.out.println("show to Player: " + player.getName() + " (" + player.getUniqueId() + ")");
 		try {
 			sendPacket(player, objectivePacket(ObjectiveMode.CREATE));
 			sendPacket(player, displayObjectivePacket());
