@@ -5,6 +5,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public final class Formatter {
@@ -82,6 +83,14 @@ public final class Formatter {
         }
         if (component==null) component = Component.text(text);
         return component;
+    }
+
+    public static Map<Character, TextColor> getColorFormattings() {
+        return new HashMap<>(COLORS);
+    }
+
+    public static Map<Character, TextDecoration> getDecorationFormattings() {
+        return new HashMap<>(DECORATIONS);
     }
 
 
