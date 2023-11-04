@@ -7,7 +7,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 
 import java.util.Map;
 
-public class Formatter {
+public final class Formatter {
 
     private static final Map<Character, TextColor> COLORS = Map.ofEntries(
             Map.entry('0', TextColor.fromHexString("#000000")),
@@ -83,5 +83,8 @@ public class Formatter {
         if (component==null) component = Component.text(text);
         return component;
     }
+
+
+    private Formatter() {}
 
 }
