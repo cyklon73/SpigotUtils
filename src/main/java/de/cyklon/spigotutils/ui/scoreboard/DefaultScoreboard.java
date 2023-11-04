@@ -182,7 +182,12 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 			sendPacket(player, objectivePacket(ObjectiveMode.CREATE));
 			sendPacket(player, displayObjectivePacket());
 
-			Map<Integer, Pair<T, Integer>> topLines = getTopEntries(this.lines, LIMIT);
+			Map<Integer, Pair<T, Integer>> copy = new HashMap<>(lines);
+			clearLines();
+			update();
+			updateLines(copy);
+
+			/*Map<Integer, Pair<T, Integer>> topLines = getTopEntries(this.lines, LIMIT);
 
 			System.out.println("toplines:");
 			System.out.println("s: " + topLines.size());
@@ -202,7 +207,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 
 			for (Integer score : topLines.keySet()) {
 				sendLineChange(score, topLines.get(score).second());
-			}
+			}*/
 		} catch (Throwable t) {
 			throw new RuntimeException("Unable to show for player '" + player.getName() + "'", t);
 		}
