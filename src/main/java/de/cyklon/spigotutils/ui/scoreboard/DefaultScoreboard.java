@@ -184,6 +184,9 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 
 			Map<Integer, Pair<T, Integer>> topLines = getTopEntries(this.lines, LIMIT);
 
+			System.out.println("toplines:");
+			System.out.println("s: " + topLines.size());
+			System.out.println(topLines);
 			int i = 0;
 			for (Integer score : topLines.keySet()) {
 				int i1 = topLines.get(score).second();
