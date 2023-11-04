@@ -5,6 +5,8 @@ import de.cyklon.spigotutils.version.MinecraftVersion;
 import de.cyklon.spigotutils.version.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_20_R1.CraftOfflinePlayer;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -169,7 +171,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	}
 
 	protected boolean addPlayer(Player player) {
-		if (players.contains(player)) return false;
+		if (contains(player)) return false;
 		players.add(player);
 		return true;
 	}
@@ -200,7 +202,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	}
 
 	protected boolean removePlayer(Player player) {
-		if (!players.contains(player)) return false;
+		if (!contains(player)) return false;
 		players.remove(player);
 		return true;
 	}
@@ -437,6 +439,15 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 		}
 
 		return packet;
+	}
+
+	protected boolean contains(Player player) {
+		return contains(player.getUniqueId());
+	}
+
+	protected boolean contains(UUID uuid) {
+		for (Player player : players) if (player.getUniqueId().equals(uuid)) return true;
+		return false;
 	}
 
 	protected void sendPacket(Object packet) throws Throwable {

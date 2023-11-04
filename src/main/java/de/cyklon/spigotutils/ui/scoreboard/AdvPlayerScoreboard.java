@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -21,9 +22,15 @@ final class AdvPlayerScoreboard extends DefaultAdvScoreboard implements PlayerSc
 	public void onJoin(PlayerJoinEvent event) {
 		if (isDeleted()) return;
 		Player player = event.getPlayer();
-		if (getPlayers().stream().map(Entity::getUniqueId).toList().contains(player.getUniqueId())) show(player);
+		if (contains(player)) show(player);
 	}
 
+	@EventHandler
+	public void onQuit(PlayerQuitEvent event) {
+		if (isDeleted()) return;
+		Player player = event.getPlayer();
+		if (contains(player)) hide(player);
+	}
 	@Override
 	public boolean addPlayer(Player player) {
 		boolean f = super.addPlayer(player);
