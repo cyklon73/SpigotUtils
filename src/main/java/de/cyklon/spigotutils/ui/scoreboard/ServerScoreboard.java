@@ -11,7 +11,7 @@ import org.bukkit.plugin.Plugin;
 final class ServerScoreboard extends DefaultLegacyScoreboard implements Listener {
 
 	ServerScoreboard(Plugin plugin) {
-		super(Bukkit.getOnlinePlayers().toArray(Player[]::new));
+		super(plugin, Bukkit.getOnlinePlayers().toArray(Player[]::new));
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 

@@ -4,6 +4,8 @@ import de.cyklon.spigotutils.tuple.Pair;
 import de.cyklon.spigotutils.version.MinecraftVersion;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -26,13 +28,13 @@ abstract class DefaultLegacyScoreboard extends DefaultScoreboard<String> {
 		}
 	}
 
-	DefaultLegacyScoreboard(Player... players) {
-		super(players);
+	DefaultLegacyScoreboard(Plugin plugin, Player... players) {
+		super(plugin, players);
 	}
 
 	@Override
-	public void setTitle(String title) {
-		if (!MinecraftVersion.v1_13.isHigherOrEqual(VERSION) && title.length() > 32) throw new IllegalArgumentException("Title is longer than 32 chars");
+	public void setTitle(@Nullable String title) {
+		if (title!=null && !MinecraftVersion.v1_13.isHigherOrEqual(VERSION) && title.length() > 32) throw new IllegalArgumentException("Title is longer than 32 chars");
 		super.setTitle(title);
 	}
 

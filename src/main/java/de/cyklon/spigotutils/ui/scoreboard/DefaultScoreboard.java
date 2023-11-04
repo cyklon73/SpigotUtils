@@ -1,5 +1,7 @@
 package de.cyklon.spigotutils.ui.scoreboard;
 
+import de.cyklon.spigotutils.event.scoreboard.ScoreboardCreateEvent;
+import de.cyklon.spigotutils.event.scoreboard.ScoreboardDeleteEvent;
 import de.cyklon.spigotutils.tuple.Pair;
 import de.cyklon.spigotutils.version.MinecraftVersion;
 import de.cyklon.spigotutils.version.Version;
@@ -8,7 +10,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.craftbukkit.v1_20_R1.CraftOfflinePlayer;
 import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -151,23 +155,27 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 
 	private final String id;
 	private final List<Player> players;
+	private final Plugin plugin;
 
 	private final Map<Integer, Pair<T, Integer>> lines = new HashMap<>();
 	private Map<Integer, Pair<T, Integer>> newLines = null;
 	private T title = emptyLine();
 
-	private boolean deleted = false;
+	private boolean deleted;
 
-	protected DefaultScoreboard(@NotNull Player... players) {
+	protected DefaultScoreboard(@NotNull Plugin plugin, @NotNull Player... players) {
 		this.players = new ArrayList<>(List.of(players));
+		this.plugin = plugin;
 		this.id = "scui-" + Long.toHexString(System.currentTimeMillis());
 		try {
 			sendPacket(objectivePacket(ObjectiveMode.CREATE));
 			sendPacket(displayObjectivePacket());
+			SCOREBOARDS.add(this);
+			Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getPluginManager().callEvent(new ScoreboardCreateEvent(this)));
 		} catch (Throwable t) {
+			this.deleted = true;
 			throw new RuntimeException("Unable to create scoreboard", t);
 		}
-		SCOREBOARDS.add(this);
 	}
 
 	protected boolean addPlayer(Player player) {
@@ -185,6 +193,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 
 			int i = 0;
 			for (Integer score : topLines.keySet()) {
+
 				Pair<T, Integer> line = topLines.get(score);
 				int i1 = line.second();
 				if (i1==-1) {
@@ -227,7 +236,8 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	}
 
 	@Override
-	public void setTitle(T title) {
+	public void setTitle(@Nullable T title) {
+		if (title==null) title = emptyLine();
 		if (this.title.equals(title)) return;
 		this.title = title;
 		try {
@@ -243,13 +253,10 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	}
 
 	@Override
-	public void setLine(int score, T text) {
-		try {
-			if (newLines==null) newLines = new HashMap<>(lines);
-			newLines.put(score, new Pair<>(text, -1));
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
+	public void setLine(int score, @Nullable T text) {
+		if (text==null) text = emptyLine();
+		if (newLines==null) newLines = new HashMap<>(lines);
+		newLines.put(score, new Pair<>(text, -1));
 	}
 
 	@Override
@@ -263,7 +270,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	}
 
 	@Override
-	public List<T> getLines() {
+	public @NotNull List<T> getLines() {
 		return new ArrayList<>(lines.values()).stream().map(Pair::first).toList();
 	}
 
@@ -322,7 +329,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	}
 
 	@Override
-	public String getId() {
+	public @NotNull String getId() {
 		return id;
 	}
 
@@ -346,9 +353,15 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 			sendPacket(objectivePacket(ObjectiveMode.REMOVE));
 			SCOREBOARDS.remove(this);
 			this.deleted = true;
+			Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getPluginManager().callEvent(new ScoreboardDeleteEvent(this)));
 		} catch (Throwable t) {
 			throw new RuntimeException("Unable to delete scoreboard", t);
 		}
+	}
+
+	@Override
+	public @NotNull Plugin getCreator() {
+		return plugin;
 	}
 
 	protected abstract void sendLineChange(int score, int index) throws Throwable;

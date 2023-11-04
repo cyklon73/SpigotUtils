@@ -1,8 +1,11 @@
 package de.cyklon.spigotutils.ui.component;
 
+import de.cyklon.spigotutils.event.gui.GuiClickEvent;
 import de.cyklon.spigotutils.ui.Gui;
 import de.cyklon.spigotutils.item.ItemBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,14 +42,14 @@ public abstract class GuiComponent {
     public static class ClickEvent extends ComponentEvent implements Cancellable {
 
         private boolean cancelled = true;
-        private final HumanEntity player;
+        private final Player player;
 
-        public ClickEvent(Gui gui, GuiComponent component, HumanEntity player) {
+        public ClickEvent(Gui gui, GuiComponent component, Player player) {
             super(gui, component);
             this.player = player;
         }
 
-        public HumanEntity getWhoClicked() {
+        public Player getWhoClicked() {
             return player;
         }
 

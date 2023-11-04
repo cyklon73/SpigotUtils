@@ -1,5 +1,8 @@
 package de.cyklon.spigotutils.ui;
 
+import de.cyklon.spigotutils.event.gui.GuiClickEvent;
+import de.cyklon.spigotutils.event.gui.GuiOpenEvent;
+import de.cyklon.spigotutils.event.gui.GuiUpdateEvent;
 import de.cyklon.spigotutils.ui.component.GuiComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -105,13 +108,18 @@ public abstract class Gui implements Listener {
     }
 
     private void update() {
-        inv = Bukkit.createInventory(owner, rows*9, title.apply(currentPage, pages.size()));
+        Inventory newInv = Bukkit.createInventory(owner, rows*9, title.apply(currentPage, pages.size()));
         GuiComponent[] components = pages.get(currentPage-1);
         for (int i = 0; i < components.length; i++) {
             if (components[i]==null) continue;
-            inv.setItem(i, components[i].getItem());
+            newInv.setItem(i, components[i].getItem());
         }
-        owner.openInventory(inv);
+        GuiUpdateEvent event = new GuiUpdateEvent(this, inv, newInv);
+        Bukkit.getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            inv = event.getAfter();
+            owner.openInventory(inv);
+        }
     }
 
     private GuiComponent getComponent(ItemStack stack) {
@@ -132,9 +140,14 @@ public abstract class Gui implements Listener {
         if (!checkInventory(event)) return;
         GuiComponent component = getComponent(event.getCurrentItem());
         if (component!=null) {
-            GuiComponent.ClickEvent ce = new GuiComponent.ClickEvent(this, component, event.getWhoClicked());
-            component.onClick(ce);
-            event.setCancelled(ce.isCancelled());
+            GuiClickEvent bukkitEvent = new GuiClickEvent(this, component, owner);
+            Bukkit.getPluginManager().callEvent(bukkitEvent);
+            if (bukkitEvent.isCancelled()) event.setCancelled(true);
+            else {
+                GuiComponent.ClickEvent ce = new GuiComponent.ClickEvent(this, component, owner);
+                component.onClick(ce);
+                event.setCancelled(ce.isCancelled());
+            }
         }
     }
 
@@ -142,7 +155,9 @@ public abstract class Gui implements Listener {
      * call this to show the gui
      */
     public void show() {
-        owner.openInventory(inv);
+        GuiOpenEvent event = new GuiOpenEvent(this, owner);
+        Bukkit.getPluginManager().callEvent(event);
+        if (!event.isCancelled()) owner.openInventory(inv);
     }
 
 

@@ -4,6 +4,7 @@ import de.cyklon.spigotutils.version.Version;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -36,8 +37,8 @@ abstract class DefaultAdvScoreboard extends DefaultScoreboard<Component> {
 		}
 	}
 
-	DefaultAdvScoreboard(Player... players) {
-		super(players);
+	DefaultAdvScoreboard(Plugin plugin, Player... players) {
+		super(plugin, players);
 	}
 
 	@Override

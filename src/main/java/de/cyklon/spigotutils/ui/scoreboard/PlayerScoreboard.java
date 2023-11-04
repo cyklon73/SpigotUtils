@@ -8,13 +8,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 final class PlayerScoreboard extends DefaultLegacyScoreboard implements PlayerScoreboardUI<String>, Listener {
 
 	PlayerScoreboard(Plugin plugin, Player... players) {
-		super(players);
+		super(plugin, players);
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 
@@ -33,7 +34,7 @@ final class PlayerScoreboard extends DefaultLegacyScoreboard implements PlayerSc
 	}
 
 	@Override
-	public boolean addPlayer(Player player) {
+	public boolean addPlayer(@NotNull Player player) {
 		boolean f = super.addPlayer(player);
 		if (f) show(player);
 		return f;
@@ -47,7 +48,7 @@ final class PlayerScoreboard extends DefaultLegacyScoreboard implements PlayerSc
 	}
 
 	@Override
-	public List<Player> getPlayers() {
+	public @NotNull List<Player> getPlayers() {
 		return super.getPlayers();
 	}
 }
