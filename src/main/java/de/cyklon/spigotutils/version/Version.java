@@ -1,5 +1,6 @@
 package de.cyklon.spigotutils.version;
 
+import de.cyklon.spigotutils.exception.UnsupportedVersionException;
 import org.bukkit.Server;
 
 import java.util.regex.Matcher;
@@ -36,6 +37,14 @@ public final class Version {
 
 	public static boolean isFolia() {
 		return isPresent("io.papermc.paper.threadedregions.RegionizedServer");
+	}
+
+	public static void requirePaper() {
+		if (!isPaper()) throw new UnsupportedVersionException("A Paper Server is required for this action");
+	}
+
+	public static void requireFolia() {
+		if (!isPaper()) throw new UnsupportedVersionException("A Folia Server is required for this action");
 	}
 
 }
