@@ -97,14 +97,16 @@ public final class Formatter {
                     if (text.startsWith(prefix)) f = true;
                 } else f = true;
                 c = Component.text((f ? prefix : "") + arg);
-            } else c = Component.text(arg.substring(1));
+            } else {
+                c = Component.text(arg.substring(1));
 
-            if (format == 'r') {
-                c = c.color(COLORS.get('f'));
-                for (TextDecoration value : TextDecoration.values()) c = c.decoration(value, false);
+                if (format == 'r') {
+                    c = c.color(COLORS.get('f'));
+                    for (TextDecoration value : TextDecoration.values()) c = c.decoration(value, false);
+                }
+                if (color != null) c = c.color(color);
+                if (decoration != null) c = c.decorate(decoration);
             }
-            if (color != null) c = c.color(color);
-            if (decoration != null) c = c.decorate(decoration);
 
             if (component == null) component = c;
             else component = component.append(c);
