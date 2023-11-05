@@ -48,6 +48,8 @@ public final class Formatter {
             'o', TextDecoration.ITALIC
     );
 
+    private static final Map<Character, TextColor> CUSTOM_COLORS = new HashMap<>();
+
 
     /**
      * this method uses § as prefix, like everywhere in Minecraft
@@ -91,6 +93,7 @@ public final class Formatter {
             char format = arg.charAt(0);
             if (i==0 && !text.startsWith(prefix)) format = ' ';
             TextColor color = COLORS.get(format);
+            if (color==null) color = CUSTOM_COLORS.get(format);
             TextDecoration decoration = DECORATIONS.get(format);
 
             Component c;
@@ -120,6 +123,20 @@ public final class Formatter {
         }
         if (component==null) component = Component.text(text);
         return component;
+    }
+
+    public static Map<Character, TextColor> getCustomFormattings() {
+        return new HashMap<>(CUSTOM_COLORS);
+    }
+
+    public static void registerCustomFormatting(char format, TextColor color) {
+        if (COLORS.containsKey(format) || DECORATIONS.containsKey(format)) throw new IllegalArgumentException("you can only use formats that are not yet used in the standard formattings");
+        if (CUSTOM_COLORS.containsKey(format)) throw new IllegalArgumentException("Custom formatting has already been registered with the format '" + format + "'");
+        CUSTOM_COLORS.put(format, color);
+    }
+
+    public static TextColor unregisterCustomFormatting(char format) {
+        return CUSTOM_COLORS.remove(format);
     }
 
     public static Map<Character, TextColor> getColorFormattings() {
