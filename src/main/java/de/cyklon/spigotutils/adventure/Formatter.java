@@ -81,6 +81,7 @@ public final class Formatter {
      */
     public static Component parseText(String prefix, String text) {
         Version.requirePaper();
+        text = "r" + text;
         Component component = null;
         String[] args = text.split(prefix);
         for (int i = 0; i < args.length; i++) {
@@ -105,7 +106,11 @@ public final class Formatter {
                     for (TextDecoration value : TextDecoration.values()) c = c.decoration(value, false);
                 }
                 if (color != null) c = c.color(color);
-                if (decoration != null) c = c.decorate(decoration);
+                if (decoration != null) {
+                    Map<TextDecoration, TextDecoration.State> decorations = c.decorations();
+                    decorations.put(decoration, TextDecoration.State.TRUE);
+                    c = c.decorations(decorations);
+                }
             }
 
             if (component == null) component = c;
