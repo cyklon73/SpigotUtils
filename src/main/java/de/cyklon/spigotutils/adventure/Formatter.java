@@ -84,6 +84,7 @@ public final class Formatter {
         text = "r" + text;
         Component component = null;
         String[] args = text.split(prefix);
+        Map<TextDecoration, TextDecoration.State> decorations = null;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.length() == 0) continue;
@@ -103,11 +104,15 @@ public final class Formatter {
 
                 if (format == 'r') {
                     c = c.color(COLORS.get('f'));
-                    for (TextDecoration value : TextDecoration.values()) c = c.decoration(value, false);
+                    if (decorations==null) decorations = new HashMap<>(c.decorations());
+                    for (TextDecoration value : TextDecoration.values()) {
+                        decorations.put(value, TextDecoration.State.FALSE);
+                        c = c.decorations(decorations);
+                    }
                 }
                 if (color != null) c = c.color(color);
                 if (decoration != null) {
-                    Map<TextDecoration, TextDecoration.State> decorations = new HashMap<>(c.decorations());
+                    if (decorations==null) decorations = new HashMap<>(c.decorations());
                     decorations.put(decoration, TextDecoration.State.TRUE);
                     c = c.decorations(decorations);
                 }
