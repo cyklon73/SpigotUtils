@@ -81,14 +81,15 @@ public final class Formatter {
      */
     public static Component parseText(String prefix, String text) {
         Version.requirePaper();
-        text = "r" + text;
         Component component = null;
         String[] args = text.split(prefix);
         Map<TextDecoration, TextDecoration.State> decorations = null;
+        TextColor colors = null;
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (arg.length() == 0) continue;
             char format = arg.charAt(0);
+            if (i==0 && !text.startsWith(prefix)) format = ' ';
             TextColor color = COLORS.get(format);
             TextDecoration decoration = DECORATIONS.get(format);
 
@@ -102,20 +103,16 @@ public final class Formatter {
             } else {
                 c = Component.text(arg.substring(1));
 
+                if (decorations==null) decorations = new HashMap<>(c.decorations());
                 if (format == 'r') {
-                    c = c.color(COLORS.get('f'));
-                    if (decorations==null) decorations = new HashMap<>(c.decorations());
-                    for (TextDecoration value : TextDecoration.values()) {
-                        decorations.put(value, TextDecoration.State.FALSE);
-                        c = c.decorations(decorations);
-                    }
+                    colors = COLORS.get('f');
+                    for (TextDecoration value : TextDecoration.values()) decorations.put(value, TextDecoration.State.FALSE);
+                } else {
+                    if (color != null) colors = color;
+                    if (decoration != null) decorations.put(decoration, TextDecoration.State.TRUE);
                 }
-                if (color != null) c = c.color(color);
-                if (decoration != null) {
-                    if (decorations==null) decorations = new HashMap<>(c.decorations());
-                    decorations.put(decoration, TextDecoration.State.TRUE);
-                    c = c.decorations(decorations);
-                }
+                if (colors!=null) c = c.color(colors);
+                c = c.decorations(decorations);
             }
 
             if (component == null) component = c;
