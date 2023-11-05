@@ -50,6 +50,8 @@ public final class Formatter {
 
 
     /**
+     * this method uses § as prefix, like everywhere in Minecraft
+     * <p>>
      * all formatting from <a href="https://minecraft.fandom.com/wiki/Formatting_codes">this table</a> (even those marked as Bedrock only) can be parsed
      * <p>
      * Since §m and §n are assigned twice, the assignments for the two colors have been changed.
@@ -61,16 +63,42 @@ public final class Formatter {
      * @return the advanture Component parsed from this text
      */
     public static Component parseText(String text) {
+        return parseText("§", text);
+    }
+
+
+    /**
+     * all formatting from <a href="https://minecraft.fandom.com/wiki/Formatting_codes">this table</a> (even those marked as Bedrock only) can be parsed
+     * <p>
+     * Since §m and §n are assigned twice, the assignments for the two colors have been changed.
+     * <p>
+     * color §m -> §x
+     * <p>
+     * color §n -> §y
+     * @param text the text to parse
+     * @param prefix the prefix for formattings
+     * @return the advanture Component parsed from this text
+     */
+    public static Component parseText(String prefix, String text) {
         Version.requirePaper();
         Component component = null;
-        String[] args = text.split("§");
-        for (String arg : args) {
+        String[] args = text.split(prefix);
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
             if (arg.length() == 0) continue;
             char format = arg.charAt(0);
             TextColor color = COLORS.get(format);
             TextDecoration decoration = DECORATIONS.get(format);
 
-            Component c = Component.text((format != 'r' && color == null && decoration == null) ? arg : arg.substring(1));
+            Component c;
+            if (format != 'r' && color == null && decoration == null) {
+                boolean f = false;
+                if (i==0) {
+                    if (text.startsWith(prefix)) f = true;
+                } else f = true;
+                c = Component.text((f ? prefix : "") + arg);
+            } else c = Component.text(arg.substring(1));
+
             if (format == 'r') {
                 c = c.color(COLORS.get('f'));
                 for (TextDecoration value : TextDecoration.values()) c = c.decoration(value, false);
