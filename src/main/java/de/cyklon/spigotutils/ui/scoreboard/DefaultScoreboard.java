@@ -1,14 +1,11 @@
 package de.cyklon.spigotutils.ui.scoreboard;
 
 import de.cyklon.spigotutils.event.scoreboard.ScoreboardCreateEvent;
-import de.cyklon.spigotutils.event.scoreboard.ScoreboardDeleteEvent;
 import de.cyklon.spigotutils.tuple.Pair;
 import de.cyklon.spigotutils.version.MinecraftVersion;
 import de.cyklon.spigotutils.version.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_20_R1.CraftOfflinePlayer;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -353,7 +350,6 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 			sendPacket(objectivePacket(ObjectiveMode.REMOVE));
 			SCOREBOARDS.remove(this);
 			this.deleted = true;
-			Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getPluginManager().callEvent(new ScoreboardDeleteEvent(this)));
 		} catch (Throwable t) {
 			throw new RuntimeException("Unable to delete scoreboard", t);
 		}
