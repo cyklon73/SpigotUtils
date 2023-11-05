@@ -107,7 +107,7 @@ public final class Formatter {
                 }
                 if (color != null) c = c.color(color);
                 if (decoration != null) {
-                    Map<TextDecoration, TextDecoration.State> decorations = c.decorations();
+                    Map<TextDecoration, TextDecoration.State> decorations = new HashMap<>(c.decorations());
                     decorations.put(decoration, TextDecoration.State.TRUE);
                     c = c.decorations(decorations);
                 }
