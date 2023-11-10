@@ -11,21 +11,21 @@ import java.util.List;
 
 public abstract class OptionMapping<T> {
 
-    abstract T map(String argument);
+    public abstract T map(String argument);
 
-    @NotNull List<String> tabComplete(@Nullable CommandSender sender) {
+    public @NotNull List<String> tabComplete(@Nullable CommandSender sender) {
         return Collections.emptyList();
     }
 
-    String nullMessage(String argument) {
+    public String nullMessage(String argument) {
         return null;
     }
 
-    String exceptionMessage(String argument, Exception e) {
+    public String exceptionMessage(String argument, Exception e) {
         return null;
     }
 
-    ArgumentType<T> getArgumentType(Annotation annotation) {
+    public ArgumentType<T> getArgumentType(Annotation annotation) {
         return null;
     }
 
