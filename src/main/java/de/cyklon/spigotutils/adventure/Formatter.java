@@ -8,8 +8,10 @@ import net.kyori.adventure.text.format.TextDecoration;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public final class Formatter {
 
+    @SuppressWarnings("ConstantConditions")
     private static final Map<Character, TextColor> COLORS = Map.ofEntries(
             Map.entry('0', TextColor.fromHexString("#000000")),
             Map.entry('1', TextColor.fromHexString("#0000AA")),
