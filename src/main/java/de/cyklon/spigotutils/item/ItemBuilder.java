@@ -1,5 +1,7 @@
 package de.cyklon.spigotutils.item;
 
+import de.cyklon.spigotutils.nbt.NBTHolder;
+import de.cyklon.spigotutils.nbt.NBTItem;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -13,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 /**
  * The ItemBuilder is used to create item stacks easily with chained method calls
@@ -49,8 +53,8 @@ public class ItemBuilder {
      * @see ItemStack
      */
     public ItemBuilder(@NotNull ItemStack stack) {
-        item = stack;
-        meta = item.getItemMeta();
+        this.item = stack;
+        this.meta = item.getItemMeta();
     }
 
     /**
@@ -205,6 +209,60 @@ public class ItemBuilder {
         meta.getPersistentDataContainer().set(key, type, value);
         return this;
     }
+
+    private ItemBuilder processNBT(Consumer<NBTItem> consumer) {
+        NBTItem nbt = new NBTItem(item);
+        consumer.accept(nbt);
+        item = nbt.getItem();
+        return this;
+    }
+
+    public ItemBuilder setNBT(String key, int value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+
+    public ItemBuilder setNBT(String key, byte value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+
+    public ItemBuilder setNBT(String key, long value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+    public ItemBuilder setNBT(String key, UUID value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+    public ItemBuilder setNBT(String key, float value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+
+    public ItemBuilder setNBT(String key, int[] value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+    public ItemBuilder setNBT(String key, short value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+    public ItemBuilder setNBT(String key, byte[] value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+
+    public ItemBuilder setNBT(String key, double value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+
+    public ItemBuilder setNBT(String key, long[] value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+    public ItemBuilder setNBT(String key, String value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+
+    public ItemBuilder setNBT(String key, boolean value) {
+        return processNBT(nbt -> nbt.set(key, value));
+    }
+
+
+
+
 
     /**
      * @return the builder as String
