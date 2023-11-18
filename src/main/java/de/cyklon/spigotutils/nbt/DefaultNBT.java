@@ -1,6 +1,5 @@
 package de.cyklon.spigotutils.nbt;
 
-import lombok.SneakyThrows;
 import org.bukkit.inventory.ItemStack;
 
 import java.lang.invoke.MethodHandle;
@@ -168,9 +167,20 @@ abstract class DefaultNBT implements NBTHolder {
 		}
 	}
 
-	@SneakyThrows
-	private static Object invoke(MethodHandle handle, Object obj, Object... parameters) {
-		return handle.invoke(obj, parameters);
+	protected static Object invokeStatic(MethodHandle handle, Object... parameters) {
+		try {
+			return handle.invoke(handle, parameters);
+		} catch (Throwable e) {
+			return null;
+		}
+	}
+
+	protected static Object invoke(MethodHandle handle, Object obj, Object... parameters) {
+		try {
+			return handle.invoke(obj, parameters);
+		} catch (Throwable e) {
+			return null;
+		}
 	}
 
 	private final Object nbt;
