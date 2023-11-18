@@ -11,6 +11,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
+import static de.cyklon.spigotutils.nms.NMSReflection.obcClass;
+
 abstract class DefaultAdvScoreboard extends DefaultScoreboard<Component> {
 
 	private static final MethodHandle COMPONENT_METHOD;

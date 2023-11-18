@@ -12,6 +12,8 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Array;
 import java.util.Map;
 
+import static de.cyklon.spigotutils.nms.NMSReflection.obcClass;
+
 abstract class DefaultLegacyScoreboard extends DefaultScoreboard<String> {
 
 	private static final MethodHandle MESSAGE_FROM_STRING;
