@@ -1,6 +1,8 @@
 package de.cyklon.spigotutils.persistence;
 
 import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataHolder;
@@ -16,20 +18,25 @@ public final class PersistentDataHandler {
 
     private final PersistentDataContainer container;
 
-    private PersistentDataHandler(@NotNull PersistentDataContainer container) {
-        this.container = container;
+    private PersistentDataHandler(@NotNull PersistentDataContainer container, Runnable changeHandler) {
+        this.container = changeHandler==null ? container : new HandlePersistentDataContainer(container, changeHandler);
+    }
+
+    public static PersistentDataHandler get(@NotNull final ItemStack stack) {
+        final ItemMeta meta = stack.getItemMeta();
+        return new PersistentDataHandler(meta.getPersistentDataContainer() , () -> stack.setItemMeta(meta));
     }
 
     public static PersistentDataHandler get(@NotNull PersistentDataContainer container) {
-        return new PersistentDataHandler(container);
+        return new PersistentDataHandler(container, null);
     }
 
     public static PersistentDataHandler get(@NotNull PersistentDataHolder holder) {
-        return new PersistentDataHandler(holder.getPersistentDataContainer());
+        return new PersistentDataHandler(holder.getPersistentDataContainer(), null);
     }
 
     public static PersistentDataHandler get(@NotNull File file) {
-        return new PersistentDataHandler(new PersistentDataFile(file));
+        return new PersistentDataHandler(new PersistentDataFile(file), null);
     }
 
     public <T, Z> void set(@NotNull NamespacedKey namespacedKey, @NotNull PersistentDataType<T, Z> persistentDataType, @NotNull Z z) {
