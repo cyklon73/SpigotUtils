@@ -1,28 +1,30 @@
 package de.cyklon.spigotutils.nbt;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.item.ItemStack;
-import org.bukkit.craftbukkit.v1_20_R1.inventory.CraftItemStack;
+import lombok.SneakyThrows;
+import org.bukkit.inventory.ItemStack;
 
 public class NBTItem extends DefaultNBT {
 
-	private final ItemStack nmsStack;
+	private final Object nmsStack;
 
-	public NBTItem(org.bukkit.inventory.ItemStack stack) {
-		this(CraftItemStack.asNMSCopy(stack));
+	@SneakyThrows
+	public NBTItem(ItemStack stack) {
+		this(AS_NMS_COPY.invoke(stack));
 	}
 
-	private NBTItem(ItemStack stack) {
-		super(stack.w());
+	private NBTItem(Object stack) throws Throwable {
+		super(GET_OR_CREATE_NBT_TAG_COMPOUND.invoke(stack));
 		this.nmsStack = stack;
 	}
 
+	@SneakyThrows
 	@Override
-	protected void onChange(NBTTagCompound nbt) {
-		this.nmsStack.c(nbt);
+	protected void onChange(Object nbt) {
+		SET_NBT_TAG_COMPOUND.invoke(nmsStack, nbt);
 	}
 
-	public org.bukkit.inventory.ItemStack getItem() {
-		return nmsStack.asBukkitMirror();
+	@SneakyThrows
+	public ItemStack getItem() {
+		return (ItemStack) AS_CRAFT_MIRROR.invoke(nmsStack);
 	}
 }

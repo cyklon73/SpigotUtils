@@ -1,6 +1,8 @@
 package de.cyklon.spigotutils.ui.scoreboard;
 
 import de.cyklon.spigotutils.event.scoreboard.ScoreboardCreateEvent;
+import de.cyklon.spigotutils.nms.PacketConstructor;
+import de.cyklon.spigotutils.nms.Packets;
 import de.cyklon.spigotutils.tuple.Pair;
 import de.cyklon.spigotutils.version.MinecraftVersion;
 import de.cyklon.spigotutils.version.Version;
@@ -18,25 +20,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import de.cyklon.spigotutils.nms.Classes.net.minecraft.network.protocol.game;
+import static de.cyklon.spigotutils.nms.NMSReflection.*;
 
 abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 
 	static final Collection<ScoreboardUI<?>> SCOREBOARDS = new ArrayList<>();
-
-	private static final String NM_PACKAGE = "net.minecraft";
-	private static final String OBC_PACKAGE = "org.bukkit.craftbukkit";
-	private static final String NMS_PACKAGE = NM_PACKAGE + ".server";
-
-	private static final String VERSION_NAME = Bukkit.getServer().getClass().getPackage().getName().substring(OBC_PACKAGE.length() + 1);
-
-	private static final MethodType VOID_METHOD_TYPE = MethodType.methodType(void.class);
-	private static final boolean NMS_REPACKAGED = optionalClass(NM_PACKAGE + ".network.protocol.Packet").isPresent();
-
-	private static volatile Object theUnsafe;
-
 
 	private static final Map<Class<?>, Field[]> PACKETS = new HashMap<>(8);
 	protected static final String[] COLOR_CODES = Arrays.stream(ChatColor.values())
@@ -49,10 +41,6 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 
 
 	//Packets
-	private static final PacketConstructor PACKET_SB_OBJ;
-	private static final PacketConstructor PACKET_SB_DISPLAY_OBJ;
-	private static final PacketConstructor PACKET_SB_SCORE;
-	private static final PacketConstructor PACKET_SB_TEAM;
 	private static final PacketConstructor PACKET_SB_SERIALIZABLE_TEAM;
 
 	// Packets and components
@@ -84,12 +72,8 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 			Class<?> entityPlayerClass = nmsClass("server.level", "EntityPlayer");
 			Class<?> playerConnectionClass = nmsClass("server.network", "PlayerConnection");
 			Class<?> packetClass = nmsClass("network.protocol", "Packet");
-			Class<?> packetSbObjClass = nmsClass(gameProtocolPackage, "PacketPlayOutScoreboardObjective");
-			Class<?> packetSbDisplayObjClass = nmsClass(gameProtocolPackage, "PacketPlayOutScoreboardDisplayObjective");
-			Class<?> packetSbScoreClass = nmsClass(gameProtocolPackage, "PacketPlayOutScoreboardScore");
-			Class<?> packetSbTeamClass = nmsClass(gameProtocolPackage, "PacketPlayOutScoreboardTeam");
 			Class<?> sbTeamClass = MinecraftVersion.v1_17.isHigherOrEqual(VERSION)
-					? innerClass(packetSbTeamClass, innerClass -> !innerClass.isEnum()) : null;
+					? innerClass(game.PacketPlayOutScoreboardTeam, innerClass -> !innerClass.isEnum()) : null;
 			Field playerConnectionField = Arrays.stream(entityPlayerClass.getFields())
 					.filter(field -> field.getType().isAssignableFrom(playerConnectionClass))
 					.findFirst().orElseThrow(NoSuchFieldException::new);
@@ -109,13 +93,9 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 			PLAYER_GET_HANDLE = lookup.findVirtual(craftPlayerClass, "getHandle", MethodType.methodType(entityPlayerClass));
 			PLAYER_CONNECTION = lookup.unreflectGetter(playerConnectionField);
 			SEND_PACKET = lookup.unreflect(sendPacketMethod);
-			PACKET_SB_OBJ = findPacketConstructor(packetSbObjClass, lookup);
-			PACKET_SB_DISPLAY_OBJ = findPacketConstructor(packetSbDisplayObjClass, lookup);
-			PACKET_SB_SCORE = findPacketConstructor(packetSbScoreClass, lookup);
-			PACKET_SB_TEAM = findPacketConstructor(packetSbTeamClass, lookup);
 			PACKET_SB_SERIALIZABLE_TEAM = sbTeamClass == null ? null : findPacketConstructor(sbTeamClass, lookup);
 
-			for (Class<?> clazz : Arrays.asList(packetSbObjClass, packetSbDisplayObjClass, packetSbScoreClass, packetSbTeamClass, sbTeamClass)) {
+			for (Class<?> clazz : Arrays.asList(game.PacketPlayOutScoreboardObjective, game.PacketPlayOutScoreboardDisplayObjective, game.PacketPlayOutScoreboardScore, game.PacketPlayOutScoreboardTeam, sbTeamClass)) {
 				if (clazz == null) {
 					continue;
 				}
@@ -366,7 +346,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	protected abstract T emptyLine();
 
 	private Object objectivePacket(ObjectiveMode mode) throws Throwable {
-		Object packet = PACKET_SB_OBJ.invoke();
+		Object packet = Packets.PacketPlayOutScoreboardObjective.invoke();
 
 		setField(packet, String.class, this.id);
 		setField(packet, int.class, mode.ordinal());
@@ -384,7 +364,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	}
 
 	private Object displayObjectivePacket() throws Throwable {
-		Object packet = PACKET_SB_DISPLAY_OBJ.invoke();
+		Object packet = Packets.PacketPlayOutScoreboardDisplayObjective.invoke();
 
 		setField(packet, DISPLAY_SLOT_TYPE, SIDEBAR_DISPLAY_SLOT); // Position
 		setField(packet, String.class, this.id); // Score Name
@@ -392,7 +372,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	}
 
 	private Object scorePacket(int score, ScoreboardAction action, int index) throws Throwable {
-		Object packet = PACKET_SB_SCORE.invoke();
+		Object packet = Packets.PacketPlayOutScoreboardScore.invoke();
 
 		setField(packet, String.class, COLOR_CODES[index], 0); // Player Name
 
@@ -422,7 +402,7 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 			throw new UnsupportedOperationException();
 		}
 
-		Object packet = PACKET_SB_TEAM.invoke();
+		Object packet = Packets.PacketPlayOutScoreboardTeam.invoke();
 
 		setField(packet, String.class, this.id + ':' + score); // Team name
 		setField(packet, int.class, mode.ordinal(), VERSION.name().contains("v1_8") ? 1 : 0); // Update mode
@@ -545,91 +525,5 @@ abstract class DefaultScoreboard<T> implements ScoreboardUI<T> {
 	@Override
 	public String toString() {
 		return "ScoreboardUI{id=%s}".formatted(getId());
-	}
-
-	private static String nmsClassName(String post1_17package, String className) {
-		if (NMS_REPACKAGED) {
-			String classPackage = post1_17package == null ? NM_PACKAGE : NM_PACKAGE + '.' + post1_17package;
-			return classPackage + '.' + className;
-		}
-		return NMS_PACKAGE + '.' + VERSION_NAME + '.' + className;
-	}
-
-	private static Class<?> nmsClass(String post1_17package, String className) throws ClassNotFoundException {
-		return Class.forName(nmsClassName(post1_17package, className));
-	}
-
-	private static Optional<Class<?>> nmsOptionalClass(String post1_17package, String className) {
-		return optionalClass(nmsClassName(post1_17package, className));
-	}
-
-	private static String obcClassName(String className) {
-		return OBC_PACKAGE + '.' + VERSION_NAME + '.' + className;
-	}
-
-	protected static Class<?> obcClass(String className) throws ClassNotFoundException {
-		return Class.forName(obcClassName(className));
-	}
-
-	private static Optional<Class<?>> optionalClass(String className) {
-		try {
-			return Optional.of(Class.forName(className));
-		} catch (ClassNotFoundException e) {
-			return Optional.empty();
-		}
-	}
-
-	private static Object enumValueOf(Class<?> enumClass, String enumName) {
-		return Enum.valueOf(enumClass.asSubclass(Enum.class), enumName);
-	}
-
-	private static Object enumValueOf(Class<?> enumClass, String enumName, int fallbackOrdinal) {
-		try {
-			return enumValueOf(enumClass, enumName);
-		} catch (IllegalArgumentException e) {
-			Object[] constants = enumClass.getEnumConstants();
-			if (constants.length > fallbackOrdinal) {
-				return constants[fallbackOrdinal];
-			}
-			throw e;
-		}
-	}
-
-	private static Class<?> innerClass(Class<?> parentClass, Predicate<Class<?>> classPredicate) throws ClassNotFoundException {
-		for (Class<?> innerClass : parentClass.getDeclaredClasses()) {
-			if (classPredicate.test(innerClass)) {
-				return innerClass;
-			}
-		}
-		throw new ClassNotFoundException("No class in " + parentClass.getCanonicalName() + " matches the predicate.");
-	}
-
-	private static PacketConstructor findPacketConstructor(Class<?> packetClass, MethodHandles.Lookup lookup) throws Exception {
-		try {
-			MethodHandle constructor = lookup.findConstructor(packetClass, VOID_METHOD_TYPE);
-			return constructor::invoke;
-		} catch (NoSuchMethodException | IllegalAccessException e) {
-			// try below with Unsafe
-		}
-
-		if (theUnsafe == null) {
-			synchronized (DefaultScoreboard.class) {
-				if (theUnsafe == null) {
-					Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
-					Field theUnsafeField = unsafeClass.getDeclaredField("theUnsafe");
-					theUnsafeField.setAccessible(true);
-					theUnsafe = theUnsafeField.get(null);
-				}
-			}
-		}
-
-		MethodType allocateMethodType = MethodType.methodType(Object.class, Class.class);
-		MethodHandle allocateMethod = lookup.findVirtual(theUnsafe.getClass(), "allocateInstance", allocateMethodType);
-		return () -> allocateMethod.invoke(theUnsafe, packetClass);
-	}
-
-	@FunctionalInterface
-	protected interface PacketConstructor {
-		Object invoke() throws Throwable;
 	}
 }
