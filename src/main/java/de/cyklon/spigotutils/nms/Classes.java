@@ -5,6 +5,8 @@ import static de.cyklon.spigotutils.nms.NMSReflection.obcClass;
 
 public final class Classes {
 
+	private Classes() {}
+
 	public static final class org {
 		public static final class bukkit {
 			public static final class craftbukkit {
@@ -38,6 +40,15 @@ public final class Classes {
 	public static final class net {
 		public static final class minecraft {
 			public static final class server {
+				public static final Class<?> MinecraftServer;
+
+				static {
+					try {
+						MinecraftServer = nmsClass("server", "MinecraftServer");
+					} catch (Exception e) {
+						throw new ExceptionInInitializerError(e);
+					}
+				}
 				public static final class level {
 					public static final Class<?> EntityPlayer;
 
@@ -110,10 +121,16 @@ public final class Classes {
 			}
 			public static final class nbt {
 				public static final Class<?> NBTTagCompound;
+				public static final Class<?> NBTCompressedStreamTools;
+				public static final Class<?> NBTBase;
+				public static final Class<?> NBTTagList;
 
 				static {
 					try {
 						NBTTagCompound = nmsClass("nbt", "NBTTagCompound");
+						NBTCompressedStreamTools = nmsClass("nbt", "NBTCompressedStreamTools");
+						NBTBase = nmsClass("nbt", "NBTBase");
+						NBTTagList = nmsClass("nbt", "NBTTagList");
 					} catch (Exception e) {
 						throw new ExceptionInInitializerError(e);
 					}
