@@ -1,7 +1,8 @@
 package de.cyklon.spigotutils.item;
 
-import de.cyklon.spigotutils.nbt.NBTHolder;
 import de.cyklon.spigotutils.nbt.NBTItem;
+import de.cyklon.spigotutils.version.Version;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
@@ -67,6 +68,18 @@ public class ItemBuilder {
     }
 
     /**
+     * set the display name of the stack
+     * @param displayName the new display name
+     * @see Component
+     */
+    public ItemBuilder setDisplayName(@Nullable Component displayName) {
+        Version.requirePaper();
+        meta.displayName(displayName);
+        return this;
+    }
+
+
+    /**
      * set the localized name of the stack
      * @param localizedName the new localized name
      */
@@ -118,11 +131,37 @@ public class ItemBuilder {
     /**
      * set the Lore of the ItemStack.
      * <p>
+     * every List entry is a new Line
+     * @param lore the new Lore
+     * @see List
+     * @see Component
+     */
+    public ItemBuilder setAdventureLore(@Nullable List<? extends Component> lore) {
+        Version.requirePaper();
+        meta.lore(lore);
+        return this;
+    }
+
+    /**
+     * set the Lore of the ItemStack.
+     * <p>
      * every Array entry is a new Line
      * @param lore the new Lore
      */
     public ItemBuilder setLore(@NotNull String... lore) {
         return setLore(Arrays.asList(lore));
+    }
+
+
+    /**
+     * set the Lore of the ItemStack.
+     * <p>
+     * every Array entry is a new Line
+     * @param lore the new Lore
+     * @see Component
+     */
+    public ItemBuilder setLore(@NotNull Component... lore) {
+        return setAdventureLore(Arrays.asList(lore));
     }
 
 
@@ -145,11 +184,39 @@ public class ItemBuilder {
     /**
      * Adding lines to the lore without overwriting the old lore
      * <p>
+     * every List entry is a new Line
+     * @param lore the new Lore
+     * @see List
+     * @see Component
+     */
+    public ItemBuilder addAdventureLore(@Nullable List<Component> lore) {
+        List<Component> oldLore = meta.lore();
+        if (oldLore==null && lore==null) return setAdventureLore(null);
+        if (lore==null) return this;
+        if (oldLore==null) oldLore = new ArrayList<>();
+        oldLore.addAll(lore);
+        return setAdventureLore(oldLore);
+    }
+
+    /**
+     * Adding lines to the lore without overwriting the old lore
+     * <p>
      * every Array entry is a new Line
      * @param lore the new Lore
      */
     public ItemBuilder addLore(@NotNull String... lore) {
         return addLore(Arrays.asList(lore));
+    }
+
+    /**
+     * Adding lines to the lore without overwriting the old lore
+     * <p>
+     * every Array entry is a new Line
+     * @param lore the new Lore
+     * @see Component
+     */
+    public ItemBuilder addLore(@NotNull Component... lore) {
+        return addAdventureLore(Arrays.asList(lore));
     }
 
     /**
@@ -168,9 +235,15 @@ public class ItemBuilder {
      * @param index the line index to remove
      */
     public ItemBuilder removeLore(int index) {
-        List<String> lore = this.meta.getLore();
-        if (lore!=null) lore.remove(index);
-        this.meta.setLore(lore);
+        if (Version.isPaper()) {
+            List<Component> lore = this.meta.lore();
+            if (lore!=null) lore.remove(index);
+            this.meta.lore(lore);
+        } else {
+            List<String> lore = this.meta.getLore();
+            if (lore!=null) lore.remove(index);
+            this.meta.setLore(lore);
+        }
         return this;
     }
 
