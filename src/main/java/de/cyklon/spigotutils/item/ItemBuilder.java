@@ -1,5 +1,6 @@
 package de.cyklon.spigotutils.item;
 
+import de.cyklon.spigotutils.adventure.Formatter;
 import de.cyklon.spigotutils.nbt.NBTItem;
 import de.cyklon.spigotutils.version.Version;
 import net.kyori.adventure.text.Component;
@@ -60,10 +61,13 @@ public class ItemBuilder {
 
     /**
      * set the display name of the stack
+     * <p>
+     * if the plugin runs on a paper server, and the display name contains the Default Prefix (§), the given display name will be formatted by {@link Formatter#parseText(String)}
      * @param displayName the new display name
      */
     public ItemBuilder setDisplayName(@Nullable String displayName) {
-        meta.setDisplayName(displayName);
+        if (displayName!=null && Version.isPaper() && displayName.contains(Formatter.getDefaultPrefix())) setDisplayName(Formatter.parseText(displayName));
+        else meta.setDisplayName(displayName);
         return this;
     }
 
