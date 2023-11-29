@@ -67,7 +67,7 @@ public final class Formatter {
      * @return the advanture Component parsed from this text
      */
     public static Component parseText(String text) {
-        return parseText("§", text);
+        return parseText(getDefaultPrefix(), text);
     }
 
 
@@ -139,6 +139,10 @@ public final class Formatter {
 
     public static TextColor unregisterCustomFormatting(char format) {
         return CUSTOM_COLORS.remove(format);
+    }
+
+    public static String getDefaultPrefix() {
+        return "§";
     }
 
     public static Map<Character, TextColor> getColorFormattings() {
